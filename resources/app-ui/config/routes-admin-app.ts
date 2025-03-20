@@ -1,0 +1,90 @@
+const RoutesAdminiApp = [
+/**** Start - Admin App ****/
+  {
+    path: '/admin-app/',
+    redirect: '/admin-app/dashboard',
+  },
+  {
+    path: '/admin-app/dashboard',
+    name: 'Dashboard',
+    icon: 'Dashboard',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/dashboard',
+  },
+  {
+    path: '/admin-app/profile',
+    name: 'Profile',
+    hideInMenu: true,
+    layout: 'mix',
+    component: './admin-app/current-user/profile',
+  },
+  {
+    path: '/admin-app/categories',
+    name: 'Categories Management',
+    icon: 'AppstoreAddOutlined',
+    access: 'isAdministrator',
+    layout: 'mix',
+  },
+  {
+    path: '/admin-app/tutors',
+    name: 'Tutors Management',
+    icon: 'UsergroupAddOutlined',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/tutors-management/list-tutors',
+  },
+  {
+    path: '/admin-app/tutors/new',
+    hideInMenu: true,
+    name: 'Create Tutor',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/tutors-management/create-tutor',
+  },
+  {
+    path: '/admin-app/tutors/edit/:id',
+    hideInMenu: true,
+    name: 'Edit Tutor',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/tutors-management/update-tutor',
+  },
+  {
+    path: '/admin-app/users',
+    name: 'Users Management',
+    icon: 'TeamOutlined',
+    access: 'isAdministrator',
+    layout: 'mix',
+  },
+  {
+    path: '/admin-app/classes',
+    name: 'Classes Management',
+    icon: 'SolutionOutlined',
+    access: 'isAdministrator',
+    layout: 'mix',
+  },
+  {
+    path: '/admin-app/quizzes',
+    name: 'Quizzes Management',
+    icon: 'FieldTimeOutlined',
+    access: 'isAdministrator',
+    layout: 'mix',
+  },
+  {
+    path: '/admin-app/questions',
+    name: 'Questions Management',
+    icon: 'QuestionCircleOutlined',
+    access: 'isAdministrator',
+    layout: 'mix',
+  },
+  {
+    path: '/admin-app/fee-vouchers',
+    name: 'Fee Vouchers Management',
+    icon: 'FileProtectOutlined',
+    access: 'isAdministrator',
+    layout: 'mix',
+  },
+  /**** Start - Admin App ****/
+];
+export default RoutesAdminiApp;
