@@ -25,6 +25,15 @@ const RoutesAdminiApp = [
     icon: 'AppstoreAddOutlined',
     access: 'isAdministrator',
     layout: 'mix',
+    component: './admin-app/categories-management/list-categories',
+  },
+  {
+    path: '/admin-app/categories/new',
+    hideInMenu: true,
+    name: 'Create Category',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/categories-management/create-category',
   },
   {
     path: '/admin-app/tutors',
