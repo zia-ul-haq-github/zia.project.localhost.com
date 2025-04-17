@@ -65,6 +65,23 @@ const RoutesAdminiApp = [
     icon: 'TeamOutlined',
     access: 'isAdministrator',
     layout: 'mix',
+    component: './admin-app/users-management/list-users',
+  },
+  {
+    path: '/admin-app/users/new',
+    hideInMenu: true,
+    name: 'Create User',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/users-management/create-user',
+  },
+  {
+    path: '/admin-app/users/edit/:id',
+    hideInMenu: true,
+    name: 'Edit User',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/users-management/update-user',
   },
   {
     path: '/admin-app/classes',

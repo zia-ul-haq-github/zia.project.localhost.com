@@ -5,13 +5,15 @@ import {
     ProForm,
     ProFormText,
     ProFormTextArea,
-    ProFormList,
-    ProFormSelect
+    ProFormDatePicker,
+    StepsForm
 } from '@ant-design/pro-components';
-import {Row, Col, message, Button, Form, Image, Upload} from 'antd';
+import {Row, Col, message, Button, Form, Image, Upload, Steps, Alert} from 'antd';
 import {UploadOutlined} from '@ant-design/icons';
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {request, history} from '@umijs/max';
+
+import moment from 'moment';
 
 import { getFile, getBase64 } from '@/components/Helpers/ImageConversion';
 
@@ -24,62 +26,19 @@ const waitTime = (time = 100) => {
     });
 };
 
-
 /**
  * Form Submission handler and API Request Performer
  */
-const onFinishHandlerForm = async (values, imageUrl) => {
-    console.log('onFinishHandlerForm');
+const onFinishHandlerStepsForm = async (values, userID) => {
+    console.log('onFinishHandlerStepsForm');
     console.log('Received values of form: ', values);
 
-    /**
-     * API Request
-     */
-    try {
-
-        const request_data = {
-            image_url: imageUrl,
-            title: values?.title,
-            description: values?.description,
-            author_id: 1,
-            tutors: values?.tutors?.map( ( tutor ) => tutor?.tutor ) || [],
-            users: values?.users?.map( ( user ) => user?.user ) || [],
-        };
-
-        console.log('request_data');
-        console.log(request_data);
-
-        return await request('/api/categories', {
-            method: 'POST',
-            data: request_data,
-
-        }).then(async (api_response) => {
-            console.log('api_response');
-            console.log(api_response);
-
-            /**
-             * User Created then show message and redirect to listing screen
-             */
-            if (api_response?.data?.id > 0) {
-                message.success('Submitted successfully');
-                history.push('/admin-app/categories/edit/' + api_response?.data?.id);
-            }
-
-        }).catch(function (error) {
-            console.log(error);
-        });
-
-    } catch (api_response) {
-        console.log('api_response - error');
-        console.log(api_response);
-    }
-
-    return true;
+    message.success('Submitted successfully');
+    history.push('/admin-app/users/edit/' + userID);
     
 };
 
-
-const CreateCategory = () => {
+const CreateUser = () => {
 
     /**
      * States of Component
@@ -87,99 +46,97 @@ const CreateCategory = () => {
 
     const [form] = Form.useForm();
 
-    const [imageUrl, setImageUrl] = useState(DEFAULT_PLACEHOLDER_IMAGE_URL);
-
-    const [ allTutors, setAllTutors ] = useState( [] );
-    const [ allUsers, setAllUsers ] = useState( [] );
-
-    const initialValues = {
-        tutors: [
-			{
-				tutor: undefined, // Shows 1 empty dropdown
-			},
-		],
-		users: [
-			{
-				user: undefined, // Shows 1 empty dropdown
-			},
-		]
-	};
-
-
-    /**
-	 * Start - Tutors Data
-	 */
-	useEffect( () => {
-		return request('/api/users', {
-
-            params: {
-                role: 'tutor',
-                page: 1,
-                per_page: 1000,
-            },
-
-        }).then( ( api_response ) => {
-			const table_data = api_response.data.data.map( ( item, i ) => ( {
-				value: item?.id,
-				label: item?.name,
-			} ) );
-
-			setAllTutors( table_data );
-
-			return table_data;
-		} );
-	}, [] );
-
+    const [imageUrl, setImageUrl] = useState(DEFAULT_USER_PROFILE_IMAGE_URL);
     
-    /**
-	 * Start - Users Data
-	 */
-	useEffect( () => {
-		return request('/api/users', {
-
-            params: {
-                role: 'user',
-                page: 1,
-                per_page: 1000,
-            },
-
-        }).then( ( api_response ) => {
-			const table_data = api_response.data.data.map( ( item, i ) => ( {
-				value: item?.id,
-				label: item?.name,
-			} ) );
-
-			setAllUsers( table_data );
-
-			return table_data;
-		} );
-	}, [] );
-
-
-    /**
+       /**
      * The Component Output
      */
 
     return (
         <PageContainer>
-            
-                <ProForm
+            <StepsForm
+                onFinish={async (values) => {
+                    await waitTime(1000);
+                    return await onFinishHandlerStepsForm(values, userID);
+                }}
+                formProps={{
+                    validateMessages: {
+                        required: 'This is required',
+                    },
+                }}
+                submitter={{
+                    render: (_, dom) => {
+                        return (<FooterToolbar>{dom}</FooterToolbar>)
+                    },
+                }}
+                // You can use the stepsRender attribute to customize the step bar, refer to the following
+                stepsRender={(steps, dom) => {
+                    return (
+                        <Steps current={dom?.props?.children?.props?.current}>
+                            {[
+                            {key: "personal_details", title: "Personal Details"},
+                            {key: "qualification_and_experience_details", title: "Dummy Data"}
+                            ].map((item) => (
+                            <Steps.Step key={item.key} title={item.title}/>
+                            ))}
+                        </Steps>
+                    );
+                return dom;
+                }}
+            >
+                <StepsForm.StepForm
+                    name="personal_details"
+                    title="Personal Details"
                     onFinish={async (values) => {
                         await waitTime(2000);
-
-                        await onFinishHandlerForm(values, imageUrl);
+                        const request_data = {
+                            // image_base_64: values?.image_base_64,
+                            // image_base_64: imageUrl,
+                            image_url: imageUrl,
+                            name: values?.name,
+                            email: values?.email,
+                            role: 'user',
+                            mobile_no: values?.mobile_no,
+                            date_of_birth: moment(new Date(values?.date_of_birth)).format('YYYY-MM-DD'),
+                            bio_data: values?.bio_data,
+                            password: values?.password,
+                        };
+                    
+                        console.log('request_data');
+                        console.log(request_data);
+                    
+                        /**
+                         * API Request
+                        */
+                    
+                        request('/api/users', {
+                            method: 'POST',
+                            data: request_data,
+                    
+                        }).then(async (api_response) => {
+                            console.log('api_response');
+                            console.log(api_response);
+                    
+                            /**
+                             * User Created then show message and redirect to listing screen
+                             */
+                            if (api_response?.data?.id > 0) {
+                                setTutorID(api_response?.data?.id);
+                            }
+                    
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                        return true;
                     }}
                     layout='vertical'
                     grid={true}
-                    initialValues={initialValues}
+                    //   initialValues={initialValues}
                     form={form}
-                    submitter={{
-                        render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
-                    }}
                 >
                 
                     <ProCard
-                        title="Category Details"
+                        title="BIO Details"
                         bordered
                         headerBordered
                         collapsible
@@ -267,7 +224,7 @@ const CreateCategory = () => {
 
                                                 // }}
                                                 data={{
-                                                    'directory': 'categories'
+                                                    'directory': 'users'
                                                 }}
                                                 onRemove={(file) => {
                                                     console.log('file is removed');
@@ -277,7 +234,7 @@ const CreateCategory = () => {
                                                         method: 'DELETE',
                                                         data: {
                                                            'filename': file?.name,
-                                                            'directory': 'categories' 
+                                                            'directory': 'users' 
                                                         },
                                                     }).then(async (api_response) => {
                                                         console.log('api_response');
@@ -302,116 +259,95 @@ const CreateCategory = () => {
                             <Col span={18}>
                                 <ProForm.Group size={24}>
                                     <ProFormText
-                                        name={'title'}
-                                        label="Title"
-                                        placeholder="Type Category Title"
-                                        colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
+                                        name={'name'}
+                                        label="Name"
+                                        placeholder="Type Your Name"
+                                        colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                                    />
+                                    <ProFormText
+                                        label="Email"
+                                        name={'email'}
+                                        placeholder="info@example.com etc."
+                                        rules={[{ required: true }]}
+                                        colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                                    />
+                                </ProForm.Group>
+                                <ProForm.Group size={24}>
+                                    <ProFormDatePicker
+                                        label="Date of Birth"
+                                        name={'date_of_birth'}
+                                        colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                                    />
+                                    <ProFormText
+                                        name={'mobile_no'}
+                                        label="Mobile No"
+                                        placeholder="Type Your Mobile No"
+                                        colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                 </ProForm.Group>
                                 <ProForm.Group size={24}>
                                     <ProFormTextArea
-                                        name={'description'}
-                                        label="Description"
-                                        placeholder="Share a little description to fill out your category."
+                                        name={'bio_data'}
+                                        label="Biographical Info"
+                                        placeholder="Share a little biographical information to fill out your profile. This may be shown publicly. "
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
+                                    />
+                                </ProForm.Group>
+                                <ProForm.Group size={24}>
+                                    <ProFormText.Password
+                                        name={'password'}
+                                        label="Password"
+                                        placeholder="Please type a password"
+                                        rules={[{required: true}]}
+                                        colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                                    />
+                                    <ProFormText.Password
+                                        name={'password_confirmation'}
+                                        label="Confirm Password"
+                                        dependencies={['password']}
+                                        placeholder="Please type a confirm password"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Please confirm your password!',
+                                            },
+                                            ({ getFieldValue }) => ({
+                                                validator(_, value) {
+                                                    if (!value || getFieldValue('password') === value) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error('The new password that you entered do not match!'));
+                                                },
+                                            }),
+                                        ]}
+                                        colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                 </ProForm.Group>
                             </Col>
                         </Row>
                     </ProCard>
-                    <ProCard
-                        title="Assign Tutors"
-                        bordered
-                        headerBordered
-                        collapsible
-                        size="default"
-                        type="inner"
-                        style={ {
-                            marginBlockEnd: 15,
-                            minWidth: 800,
-                            maxWidth: '100%',
-                        } }
-                    >
-                        <ProForm.Group size={ 24 }>
-                            <ProFormList
-                                name={ 'tutors' }
-                                min={ 1 }
-                                copyIconProps={ { tooltipText: 'Copy this tutor' } }
-                                deleteIconProps={ { tooltipText: 'Delete this tutor' } }
-                                creatorButtonProps={ {
-                                    creatorButtonText: 'Add New Tutor',
-                                } }
-                            >
-                                <ProForm.Group size={ 24 }>
-                                    <ProFormSelect
-                                        name={ 'tutor' }
-                                        label="Tutor"
-                                        showSearch
-                                        options={ allTutors }
-                                        debounceTime={ 300 }
-                                        placeholder="Please Select a Tutor"
-                                        rules={ [ { required: true } ] }
-                                        colProps={ {
-                                            xs: 24,
-                                            sm: 24,
-                                            md: 24,
-                                            lg: 24,
-                                            xl: 24,
-                                        } }
-                                    />
-                                </ProForm.Group>
-                            </ProFormList>
-                        </ProForm.Group>
-                    </ProCard>
-                    <ProCard
-                        title="Assign Users"
-                        bordered
-                        headerBordered
-                        collapsible
-                        size="default"
-                        type="inner"
-                        style={ {
-                            marginBlockEnd: 15,
-                            minWidth: 800,
-                            maxWidth: '100%',
-                        } }
-                    >
-                        <ProForm.Group size={ 24 }>
-                            <ProFormList
-                                name={ 'users' }
-                                min={ 1 }
-                                copyIconProps={ { tooltipText: 'Copy this user' } }
-                                deleteIconProps={ { tooltipText: 'Delete this user' } }
-                                creatorButtonProps={ {
-                                    creatorButtonText: 'Add New User',
-                                } }
-                            >
-                                <ProForm.Group size={ 24 }>
-                                    <ProFormSelect
-                                        name={ 'user' }
-                                        label="User"
-                                        showSearch
-                                        options={ allUsers }
-                                        debounceTime={ 300 }
-                                        placeholder="Please Select a User"
-                                        rules={ [ { required: true } ] }
-                                        colProps={ {
-                                            xs: 24,
-                                            sm: 24,
-                                            md: 24,
-                                            lg: 24,
-                                            xl: 24,
-                                        } }
-                                    />
-                                </ProForm.Group>
-                            </ProFormList>
-                        </ProForm.Group>
-                    </ProCard>
-                </ProForm>
+                </StepsForm.StepForm>
                 
+                <StepsForm.StepForm
+                    name="qualification_and_experience_details"
+                    title="Qualification & Experience Details"
+                    onFinish={async () => {
+                        await waitTime(2000);
+                        return true;
+                    }}
+                    layout='vertical'
+                    grid={true}
+                    //   initialValues={initialValues}
+                    //   form={form}
+                >
+                
+                <Alert message=" testing message 123" type="success" />;
+                            
+                </StepsForm.StepForm>
+            </StepsForm>
+
         </PageContainer>
     );
-
 };
 
-export default CreateCategory;
+export default CreateUser;

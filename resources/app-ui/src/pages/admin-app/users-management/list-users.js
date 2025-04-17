@@ -3,14 +3,13 @@ import {
   PageContainer,
   ProTable
 } from '@ant-design/pro-components';
-import {Button, Image, message} from 'antd';
+import {Button, Avatar, message} from 'antd';
 import {request,history} from '@umijs/max';
 import moment from 'moment';
 import {useModel} from 'umi';
 import {useRef, useState} from "react";
 
-import DeleteCategory from './delete-category';
-
+import DeleteUser from './delete-user';
 
 export const waitTimePromise = async (time = 100) => {
     return new Promise((resolve) => {
@@ -24,7 +23,7 @@ export const waitTime = async (time = 100) => {
     await waitTimePromise(time);
 };
 
-const ListCategories = () => {
+const ListUsers = () => {
 
     const {initialState, loading, refresh, setInitialState} = useModel('@@initialState');
 
@@ -34,7 +33,7 @@ const ListCategories = () => {
     console.log('loading');
     console.log(loading);
 
-    const categoriesTableRef = useRef();
+    const usersTableRef = useRef();
 
     const columns = [
 
@@ -47,8 +46,8 @@ const ListCategories = () => {
             defaultSortOrder: 'descend',
         },
         {
-            title: "Title",
-            key: 'table-column-title',
+            title: "Name",
+            key: 'table-column-name',
             copyable: true,
             hideInSearch: true,
             render: (dom, record) => {
@@ -56,18 +55,23 @@ const ListCategories = () => {
                 return (
                     <div>
 
-                        <Image
-                            width={50}
-                            height={50}
-                            src={record?.image_url}
-                        />
+                        <Avatar size={"large"}
+                        src={(null !== record?.image_url ? record?.image_url : DEFAULT_USER_PROFILE_IMAGE_URL)}/>
                         <span style={{margin: "0px 0px 0px 10px"}}>
-                            {record?.title}
+
+                            {record?.name}
+
                         </span>
 
                     </div>
                 );
             },
+        },
+        {
+            title: "Email",
+            dataIndex: 'email',
+            key: 'table-column-email',
+            hideInSearch: true,
         },
         {
             title: "Created Date",
@@ -100,18 +104,18 @@ const ListCategories = () => {
                 <Button
                     key="editable"
                     onClick={() => {
-                        history.push('/admin-app/categories/edit/' + record.id);
+                        history.push('/admin-app/users/edit/' + record.id);
                     }}
                 >
                     <EditOutlined />
                 </Button>,
 
-                <DeleteCategory
+                <DeleteUser
                     rowId={ record?.id }
                     onFinish={ ( { status, text_message } ) => {
                         if ( status ) {
                             message.success( text_message );
-                            categoriesTableRef.current?.reload();
+                            usersTableRef.current?.reload();
                         } else {
                             message.error( text_message );
                         }
@@ -121,11 +125,11 @@ const ListCategories = () => {
             ],
         },
     ];
-
+  
     return (
         <PageContainer>
             <ProTable
-                actionRef={categoriesTableRef}
+                actionRef={usersTableRef}
                 rowKey="id"
                 search={false}
                 pagination={{
@@ -139,14 +143,19 @@ const ListCategories = () => {
                         type="primary"
                         key="new"
                         onClick={() => {
-                            history.push('/admin-app/categories/new');
+                            history.push('/admin-app/users/new');
                         }}
                     >
                         <PlusOutlined/> New
                     </Button>,
                 ]}
+                // dataSource={TableListItem}
+                // params={{
+
+                // }}
                 request={
 
+                    // async (params = {}, sort, filter, paginate) => {
                         async (params, sort, filter) => {    
 
                         console.log('params');
@@ -163,11 +172,12 @@ const ListCategories = () => {
                          */
                         await waitTime(2000);
 
-                        return await request('/api/categories', {
+                        return await request('/api/users', {
 
                             params: {
                                 sort: {...sort},
                                 pagination: {...params},
+                                role: 'user',
                             },
 
                         }).then(async (api_response) => {
@@ -194,4 +204,4 @@ const ListCategories = () => {
     );
 };
 
-export default ListCategories;
+export default ListUsers;
