@@ -36,6 +36,14 @@ const RoutesAdminiApp = [
     component: './admin-app/categories-management/create-category',
   },
   {
+    path: '/admin-app/categories/edit/:id',
+    hideInMenu: true,
+    name: 'Edit Category',
+    access: 'isAdministrator',
+    layout: 'mix',
+    component: './admin-app/categories-management/update-category',
+  },
+  {
     path: '/admin-app/tutors',
     name: 'Tutors Management',
     icon: 'UsergroupAddOutlined',
