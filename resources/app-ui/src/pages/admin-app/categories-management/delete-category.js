@@ -1,6 +1,6 @@
 import { Button, Popconfirm } from 'antd';
 import { QuestionCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import {request} from '@umijs/max';
+import { request } from '@umijs/max';
 
 const DeleteCategory = ( { rowId, onFinish } ) => {
 	return (

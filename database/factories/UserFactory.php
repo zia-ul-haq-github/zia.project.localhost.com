@@ -39,7 +39,7 @@ class UserFactory extends Factory
             'date_of_birth' => fake()->dateTimeBetween('-50 years', '-30 years', 'Asia/Karachi')->format('Y-m-d H:i:s')
         ];
 
-        // https://robohash.org/mairaj/?set=set2
+        // https://robohash.org/zia/?set=set2
     }
 
     // public function withAvatar(): Factory|UserFactory

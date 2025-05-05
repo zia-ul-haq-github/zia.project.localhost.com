@@ -8,15 +8,13 @@ import {
     ProFormDatePicker,
     StepsForm
 } from '@ant-design/pro-components';
-import {Row, Col, message, Button, Form, Image, Upload, Steps, Alert} from 'antd';
-import {UploadOutlined} from '@ant-design/icons';
-import React, {useRef, useState} from "react";
-import {request, history} from '@umijs/max';
-
+import { Row, Col, message, Button, Form, Image, Upload, Steps, Alert } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import { request, history } from '@umijs/max';
 import moment from 'moment';
 
 import { getFile, getBase64 } from '@/components/Helpers/ImageConversion';
-
 
 const waitTime = (time = 100) => {
     return new Promise((resolve) => {
@@ -45,8 +43,8 @@ const CreateUser = () => {
      */
 
     const [form] = Form.useForm();
-
     const [imageUrl, setImageUrl] = useState(DEFAULT_USER_PROFILE_IMAGE_URL);
+    const [userID, setUserID] = useState({});
     
        /**
      * The Component Output
@@ -102,9 +100,6 @@ const CreateUser = () => {
                             password: values?.password,
                         };
                     
-                        console.log('request_data');
-                        console.log(request_data);
-                    
                         /**
                          * API Request
                         */
@@ -114,14 +109,12 @@ const CreateUser = () => {
                             data: request_data,
                     
                         }).then(async (api_response) => {
-                            console.log('api_response');
-                            console.log(api_response);
                     
                             /**
                              * User Created then show message and redirect to listing screen
                              */
                             if (api_response?.data?.id > 0) {
-                                setTutorID(api_response?.data?.id);
+                                setUserID(api_response?.data?.id);
                             }
                     
                         }).catch(function (error) {
@@ -289,6 +282,9 @@ const CreateUser = () => {
                                     <ProFormTextArea
                                         name={'bio_data'}
                                         label="Biographical Info"
+                                        fieldProps={ {
+                                            rows: 6,
+                                        } }
                                         placeholder="Share a little biographical information to fill out your profile. This may be shown publicly. "
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />

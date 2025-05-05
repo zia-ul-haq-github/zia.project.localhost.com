@@ -1,13 +1,10 @@
-import {EditOutlined, PlusOutlined} from '@ant-design/icons';
-import {
-  PageContainer,
-  ProTable
-} from '@ant-design/pro-components';
-import {Button, Avatar, message} from 'antd';
-import {request,history} from '@umijs/max';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
+import { Button, Avatar, message } from 'antd';
+import { request, history } from '@umijs/max';
 import moment from 'moment';
-import {useModel} from 'umi';
-import {useRef, useState} from "react";
+import { useModel } from 'umi';
+import { useRef } from "react";
 
 import DeleteUser from './delete-user';
 
@@ -136,7 +133,6 @@ const ListUsers = () => {
                     defaultPageSize: 10,
                     showSizeChanger: true,
                     pageSizeOptions: [10, 20, 50, 100],
-                    onChange: (page) => console.log(page),
                 }}
                 toolBarRender={() => [
                     <Button
@@ -149,23 +145,9 @@ const ListUsers = () => {
                         <PlusOutlined/> New
                     </Button>,
                 ]}
-                // dataSource={TableListItem}
-                // params={{
-
-                // }}
                 request={
 
-                    // async (params = {}, sort, filter, paginate) => {
-                        async (params, sort, filter) => {    
-
-                        console.log('params');
-                        console.log(params);
-
-                        console.log('params - sort');
-                        console.log(sort);
-
-                        console.log('params - filter');
-                        console.log(filter);
+                        async (params, sort, filter) => {
 
                         /**
                          * Delay the API request
@@ -181,14 +163,6 @@ const ListUsers = () => {
                             },
 
                         }).then(async (api_response) => {
-                            console.log('api_response');
-                            console.log(api_response);
-
-                            console.log('api_response.data');
-                            console.log(api_response.data);
-
-                            console.log('api_response.data.data');
-                            console.log(api_response.data.data);
 
                             return { data: api_response.data.data, total: api_response.data.total, current_page: api_response.data.current_page};
 

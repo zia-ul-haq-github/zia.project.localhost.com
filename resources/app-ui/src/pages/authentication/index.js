@@ -67,6 +67,7 @@ const Login = () => {
     const [type, setType] = useState('sign-in');
     const { initialState, setInitialState } = useModel('@@initialState');
     const { styles } = useStyles();
+    // const { styles } = {}; // by zia
     const intl = useIntl();
 
     const fetchUserInfo = async () => {
@@ -148,7 +149,14 @@ const Login = () => {
           // Assuming you have obtained the token from your backend API response
           localStorage.setItem('laravel_api_bearer_token', logged_user_api_response?.data?.access_token?.text);
 
-        
+        //   flushSync(() => {
+            // setInitialState((s) => ({
+            // setInitialState((s) => ({
+            //   ...s,
+            //   zia_test: logged_user_api_response?.data?.user,
+            //   currentUser: logged_user_api_response?.data?.user,
+            // }));
+        //   });
 
         console.log('after - redirect - logged_user_api_response?.data?.user');
         console.log(logged_user_api_response?.data?.user);

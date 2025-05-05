@@ -507,6 +507,9 @@ const UpdateProfile = () => {
                                     <ProFormTextArea
                                         name={'bio_data'}
                                         label="Biographical Info"
+                                        fieldProps={ {
+                                            rows: 6,
+                                        } }
                                         placeholder="Share a little biographical information to fill out your profile. This may be shown publicly. "
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />

@@ -10,7 +10,7 @@ import {
 } from '@ant-design/pro-components';
 import {Row, Col, message, Button, Form, Image, Upload} from 'antd';
 import {UploadOutlined} from '@ant-design/icons';
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {request, history} from '@umijs/max';
 
 import { getFile, getBase64 } from '@/components/Helpers/ImageConversion';
@@ -46,19 +46,14 @@ const onFinishHandlerForm = async (values, imageUrl) => {
             users: values?.users?.map( ( user ) => user?.user ) || [],
         };
 
-        console.log('request_data');
-        console.log(request_data);
-
         return await request('/api/categories', {
             method: 'POST',
             data: request_data,
 
         }).then(async (api_response) => {
-            console.log('api_response');
-            console.log(api_response);
 
             /**
-             * User Created then show message and redirect to listing screen
+             * Category Created then show message and redirect to listing screen
              */
             if (api_response?.data?.id > 0) {
                 message.success('Submitted successfully');
@@ -88,7 +83,6 @@ const CreateCategory = () => {
     const [form] = Form.useForm();
 
     const [imageUrl, setImageUrl] = useState(DEFAULT_PLACEHOLDER_IMAGE_URL);
-
     const [ allTutors, setAllTutors ] = useState( [] );
     const [ allUsers, setAllUsers ] = useState( [] );
 
@@ -166,7 +160,6 @@ const CreateCategory = () => {
                 <ProForm
                     onFinish={async (values) => {
                         await waitTime(2000);
-
                         await onFinishHandlerForm(values, imageUrl);
                     }}
                     layout='vertical'
@@ -312,6 +305,9 @@ const CreateCategory = () => {
                                     <ProFormTextArea
                                         name={'description'}
                                         label="Description"
+                                        fieldProps={ {
+                                            rows: 6,
+                                        } }
                                         placeholder="Share a little description to fill out your category."
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
@@ -351,13 +347,7 @@ const CreateCategory = () => {
                                         debounceTime={ 300 }
                                         placeholder="Please Select a Tutor"
                                         rules={ [ { required: true } ] }
-                                        colProps={ {
-                                            xs: 24,
-                                            sm: 24,
-                                            md: 24,
-                                            lg: 24,
-                                            xl: 24,
-                                        } }
+                                        colProps={ { xs: 24, sm: 24, md: 24, lg: 24, xl: 24 } }
                                     />
                                 </ProForm.Group>
                             </ProFormList>
@@ -395,13 +385,7 @@ const CreateCategory = () => {
                                         debounceTime={ 300 }
                                         placeholder="Please Select a User"
                                         rules={ [ { required: true } ] }
-                                        colProps={ {
-                                            xs: 24,
-                                            sm: 24,
-                                            md: 24,
-                                            lg: 24,
-                                            xl: 24,
-                                        } }
+                                        colProps={ { xs: 24, sm: 24, md: 24, lg: 24, xl: 24 } }
                                     />
                                 </ProForm.Group>
                             </ProFormList>

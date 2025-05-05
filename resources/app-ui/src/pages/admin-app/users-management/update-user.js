@@ -7,14 +7,13 @@ import {
     ProFormTextArea,
     ProFormDatePicker
 } from '@ant-design/pro-components';
-import {Row, Col, message, Button, Form, Image, Upload} from 'antd';
-import {UploadOutlined, PlusOutlined} from '@ant-design/icons';
-import React, {useEffect, useRef, useState} from "react";
-import {request, history} from '@umijs/max';
-import {useParams} from "@@/exports";
+import { Row, Col, message, Button, Form, Image, Upload } from 'antd';
+import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import { request, history } from '@umijs/max';
+import { useParams } from "@@/exports";
 
 import { getFile, getBase64 } from '@/components/Helpers/ImageConversion';
-
 
 const waitTime = (time = 100) => {
     return new Promise((resolve) => {
@@ -95,9 +94,7 @@ const UpdateUser = () => {
      */
 
     const [form] = Form.useForm();
-
     const [userId, setUserId] = useState(0);
-
     const [userProfileImageUrl, setUserProfileImageUrl] = useState('');
     const [imageUrl, setImageUrl] = useState(userProfileImageUrl);
 
@@ -358,6 +355,9 @@ const UpdateUser = () => {
                                     <ProFormTextArea
                                         name={'bio_data'}
                                         label="Biographical Info"
+                                        fieldProps={ {
+                                            rows: 6,
+                                        } }
                                         placeholder="Share a little biographical information to fill out your profile. This may be shown publicly. "
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
