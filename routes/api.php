@@ -10,6 +10,10 @@ use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\AttemptController;
+use App\Http\Controllers\FeeVoucherController;
+use App\Http\Controllers\FeePackageController;
 
 use App\Http\Controllers\FileManagerController;
 
@@ -28,6 +32,16 @@ Route::prefix('auth')->group(function () {
 
 });
 
+
+
+Route::post('image-tmp-upload', [UserController::class, 'testImageUpload']);
+Route::post('/file-manager/upload', [FileManagerController::class, 'storeFile']);
+Route::delete('/file-manager/delete', [FileManagerController::class, 'deleteFile']);
+
+
+/**
+ * Only Accessable after login and Laravel Sanctum Authtentication validation
+ */
 Route::middleware('auth:sanctum')->group(function () {
 
     /**
@@ -60,8 +74,24 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::resource('quizzes', QuizController::class);
 
-});
+    /**
+     * Question Module
+     */
+    Route::resource('questions', QuestionController::class);
 
-Route::post('image-tmp-upload', [UserController::class, 'testImageUpload']);
-Route::post('/file-manager/upload', [FileManagerController::class, 'storeFile']);
-Route::delete('/file-manager/delete', [FileManagerController::class, 'deleteFile']);
+    /**
+     * Attempt Module
+     */
+    Route::resource('attempts', AttemptController::class);
+
+    /**
+     * Fee Voucher
+     */
+    Route::resource('fee-vouchers', FeeVoucherController::class);
+    
+    /**
+     * Fee Packages
+     */
+    Route::resource('fee-packages', FeePackageController::class);
+
+});

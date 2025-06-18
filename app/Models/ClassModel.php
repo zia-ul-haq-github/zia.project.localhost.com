@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 use App\Models\Category;
 use App\Models\User;
@@ -39,7 +40,7 @@ class ClassModel extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class)->select('*');
+        return $this->belongsTo(Category::class);
     }
 
     /** 
@@ -55,9 +56,17 @@ class ClassModel extends Model
      * Relationship: Many to Many
      * https://laravel.com/docs/12.x/eloquent-relationships#many-to-many
      */
-    public function users(): BelongsToMany
+    // public function users(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(User::class, 'class_users', 'class_id', 'user_id');
+    // }
+
+    public function users()
     {
-        return $this->belongsToMany(User::class, 'class_users', 'class_id', 'user_id');
+        // $category = $this->category()->with('users');
+        // return $category->users->toArray();
+        // return [];
+        return $this->belongsToMany(User::class, 'category_users', 'category_id', 'user_id');
     }
 
     /** 

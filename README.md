@@ -31,7 +31,7 @@ The "Online Tutor Finding Application" is a web-based platform designed to simpl
 #### 1. Clone Project
 Open the terminal and run the following command.
 ```bash
-git clone https://github.com/ziaulhaq/zia.project.localhost.com.git
+git clone https://github.com/zia-ul-haq-github/zia.project.localhost.com.git
 ```
 after clonning go to the project drectory by runing the following command.
 ```bash 

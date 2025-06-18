@@ -33,6 +33,7 @@ const RoutesUserApp = [
     icon: 'TeamOutlined',
     access: 'isUser',
     layout: 'mix',
+    component: './user-app/hired-tutors/list-hired-tutors',
   },
   {
     path: '/user-app/classes',
@@ -40,6 +41,7 @@ const RoutesUserApp = [
     icon: 'SolutionOutlined',
     access: 'isUser',
     layout: 'mix',
+    component: './user-app/classes/list-classes',
   },
   {
     path: '/user-app/quizzes',
@@ -47,6 +49,7 @@ const RoutesUserApp = [
     icon: 'FieldTimeOutlined',
     access: 'isUser',
     layout: 'mix',
+    component: './user-app/quizzes/list-quizzes',
   },
   {
     path: '/user-app/fee-vouchers',
@@ -54,6 +57,7 @@ const RoutesUserApp = [
     icon: 'FileProtectOutlined',
     access: 'isUser',
     layout: 'mix',
+    component: './user-app/fee-vouchers/list-fee-vouchers',
   },
 /**** End - User App ****/
 ];

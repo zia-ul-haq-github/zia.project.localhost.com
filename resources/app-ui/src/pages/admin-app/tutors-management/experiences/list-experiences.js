@@ -100,6 +100,7 @@ const ListExperiences = ( { experiencesTableRef, tutorID } ) => {
                     actionRef={experiencesTableRef}
                     rowKey="id"
                     search={false}
+                    options={false}
                     pagination={{
                         defaultPageSize: 10,
                         showSizeChanger: true,

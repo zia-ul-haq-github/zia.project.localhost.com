@@ -39,11 +39,11 @@ class CategoryController extends Controller
                 $data = Category::orderBy($orderBy, $order)
                     ->where('title', 'like', '%'.$search.'%')
                     ->orWhere('description', 'like', '%'.$search.'%')
-                    ->with('tutors', 'users')
+                    ->with('classes', 'tutors', 'users' )
                     ->paginate($perPage);
             }else{
                 $data = Category::orderBy($orderBy, $order)
-                    ->with('tutors', 'users')
+                    ->with('classes', 'tutors', 'users')
                     ->paginate($perPage);
             }
 
@@ -95,7 +95,7 @@ class CategoryController extends Controller
             // Associate users with the category by inserting records into the pivot table
             $category->users()->attach($users_ids, ['created_at' => date('Y-m-d H:i:s')]);
 
-            $response_data = Category::with('tutors', 'users')->find($category->id);
+            $response_data = Category::with('classes', 'tutors', 'users')->find($category->id);
 
             return $this->responseSuccess($response_data, 'New Category Created Successfully !');
 
@@ -110,7 +110,7 @@ class CategoryController extends Controller
        
         try {
 
-            $data = Category::with('tutors', 'users')->find($id);
+            $data = Category::with('classes', 'tutors', 'users')->find($id);
 
             if (is_null($data)) {
                 return $this->responseError(null, 'Category Not Found', Response::HTTP_NOT_FOUND);
@@ -173,7 +173,7 @@ class CategoryController extends Controller
             // Associate users with the category by inserting records into the pivot table
             $category->users()->syncWithPivotValues($users_ids, ['updated_at' => date('Y-m-d H:i:s')]);
 
-            $response_data = Category::with('tutors', 'users')->find($category->id);
+            $response_data = Category::with('classes', 'tutors', 'users')->find($category->id);
 
             if (is_null($response_data)) {
                 return $this->responseError(null, 'Category Not Found', Response::HTTP_NOT_FOUND);

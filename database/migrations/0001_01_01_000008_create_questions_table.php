@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title', 255);
             $table->longText('choices')->nullable();
             $table->string('answer', 255);
+            $table->unsignedBigInteger('marks');
             $table->unsignedBigInteger('author_id')->comment('Author User ID');
             $table->unsignedBigInteger('quiz_id')->comment('Quiz ID');
             $table->timestamps();

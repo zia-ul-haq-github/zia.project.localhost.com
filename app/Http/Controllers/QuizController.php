@@ -34,18 +34,32 @@ class QuizController extends Controller
             $orderBy = isset($request['order_by']) ? $request['order_by'] : 'id';
             $order   = isset($request['order']) ? $request['order'] : 'desc';
             $search   = ( isset($request['search']) && ! empty(isset($request['search'])) ) ? $request['search'] : '';
+            $author_id   = ( isset($request['author_id']) && ! empty(isset($request['author_id'])) ) ? $request['author_id'] : '';
+            $class_id   = ( isset($request['class_id']) && ! empty(isset($request['class_id'])) ) ? $request['class_id'] : '';
 
-            if( ! empty($search) ){
-                $data = Quiz::orderBy($orderBy, $order)
-                    ->where('title', 'like', '%'.$search.'%')
-                    ->orWhere('description', 'like', '%'.$search.'%')
-                    ->with('class', 'questions', 'author', 'users', 'attempts')
-                    ->paginate($perPage);
-            }else{
-                $data = Quiz::orderBy($orderBy, $order)
-                    ->with('class', 'questions', 'author', 'users', 'attempts')
-                    ->paginate($perPage);
+            $query = Quiz::orderBy($orderBy, $order)
+                    ->with('class', 'questions', 'author', 'users', 'attempts');
+
+            // Add category filter if category_id is provided
+            if (! empty($author_id) ) {
+                $query->where('author_id', $author_id);
             }
+
+            // Add category filter if category_id is provided
+            if (! empty($class_id) ) {
+                $query->where('class_id', $class_id);
+            }
+
+            // / search by name and email if search text is provided
+            if( ! empty($search) ){
+                $query->whereAny([
+                    'title',
+                    'description',
+                ], 'like', '%'.$search.'%');
+            }
+
+            // get query final result
+            $data = $query->paginate($perPage);
 
             return $this->responseSuccess($data, 'Quiz List Fetch Successfully !');
 
@@ -65,6 +79,8 @@ class QuizController extends Controller
                     'title'     => 'required|string|max:50',
                     'description'     => 'nullable|max:5000',
                     'status'     => 'required|string|max:10',
+                    'passing_percentage'     => 'required|numeric',
+                    'attempts_limit'     => 'required|numeric',
                     'author_id'     => 'required|numeric',
                     'class_id'     => 'required|numeric',
                 ],
@@ -74,6 +90,10 @@ class QuizController extends Controller
                     'description.max' => 'Please provide description maximum of 5000 characters',
                     'status.required'     => 'Please provide status',
                     'status.max'          => 'Please make sure status length is upto 10 characters',
+                    'passing_percentage.required'     => 'Please provide passing percentage',
+                    'passing_percentage.numeric'          => 'Please make sure passing percentage is numeric value',
+                    'attempts_limit.required'     => 'Please provide attempts limit',
+                    'attempts_limit.numeric'          => 'Please make sure attempts limit is numeric value',
                     'author_id.required'     => 'Please provide author_id id',
                     'author_id.numeric'          => 'Please make sure author_id is numeric value',
                     'class_id.required'     => 'Please provide class id',
@@ -130,6 +150,8 @@ class QuizController extends Controller
                     'title'     => 'required|string|max:50',
                     'description'     => 'nullable|max:5000',
                     'status'     => 'required|string|max:10',
+                    'passing_percentage'     => 'required|numeric',
+                    'attempts_limit'     => 'required|numeric',
                     'author_id'     => 'required|numeric',
                     'class_id'     => 'required|numeric',
                 ],
@@ -139,6 +161,10 @@ class QuizController extends Controller
                     'description.max' => 'Please provide description maximum of 5000 characters',
                     'status.required'     => 'Please provide status',
                     'status.max'          => 'Please make sure status length is upto 10 characters',
+                    'passing_percentage.required'     => 'Please provide passing percentage',
+                    'passing_percentage.numeric'          => 'Please make sure passing percentage is numeric value',
+                    'attempts_limit.required'     => 'Please provide attempts limit',
+                    'attempts_limit.numeric'          => 'Please make sure attempts limit is numeric value',
                     'author_id.required'     => 'Please provide author_id id',
                     'author_id.numeric'          => 'Please make sure author_id is numeric value',
                     'class_id.required'     => 'Please provide class id',

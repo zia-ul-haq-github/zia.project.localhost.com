@@ -27,9 +27,38 @@ class Question extends Model
         'title',
         'choices',
         'answer',
+        'marks',
         'author_id',
         'quiz_id',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'choices' => 'array',
+        ];
+    }
+
+    /**
+     * Set the choices attribute - automatically serializes array to JSON
+     */
+    public function setChoicesAttribute($value)
+    {
+        $this->attributes['choices'] = json_encode($value);
+    }
+
+    /**
+     * Get the choices attribute - automatically deserializes JSON to array
+     */
+    public function getChoicesAttribute($value)
+    {
+        return json_decode($value, true);
+    }
 
     /** 
      * Relationship: One to One / Has One

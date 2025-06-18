@@ -28,6 +28,8 @@ class Quiz extends Model
         'title',
         'description',
         'status',
+        'passing_percentage',
+        'attempts_limit',
         'author_id',
         'class_id',
     ];
@@ -50,11 +52,19 @@ class Quiz extends Model
         return $this->hasOne(User::class,  'id', 'author_id');
     }
 
+    /** 
+     * Relationship: One to Many / Has Many
+     * https://laravel.com/docs/12.x/eloquent-relationships#one-to-many
+     */
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class, 'quiz_id', 'id');
     }
 
+    /** 
+     * Relationship: Many to Many
+     * https://laravel.com/docs/12.x/eloquent-relationships#many-to-many
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'quiz_users', 'quiz_id', 'user_id');

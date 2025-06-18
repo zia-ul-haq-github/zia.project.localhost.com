@@ -34,18 +34,33 @@ class ClassController extends Controller
             $orderBy = isset($request['order_by']) ? $request['order_by'] : 'id';
             $order   = isset($request['order']) ? $request['order'] : 'desc';
             $search   = ( isset($request['search']) && ! empty(isset($request['search'])) ) ? $request['search'] : '';
+            $author_id   = ( isset($request['author_id']) && ! empty(isset($request['author_id'])) ) ? $request['author_id'] : '';
+            $category_id   = ( isset($request['category_id']) && ! empty(isset($request['category_id'])) ) ? $request['category_id'] : '';
+            $tutor_id   = ( isset($request['tutor_id']) && ! empty(isset($request['tutor_id'])) ) ? $request['tutor_id'] : '';
+            $user_id   = ( isset($request['user_id']) && ! empty(isset($request['user_id'])) ) ? $request['user_id'] : '';
 
-            if( ! empty($search) ){
-                $data = ClassModel::orderBy($orderBy, $order)
-                    ->where('title', 'like', '%'.$search.'%')
-                    ->orWhere('description', 'like', '%'.$search.'%')
-                    ->with('category', 'quizzes', 'author', 'users')
-                    ->paginate($perPage);
-            }else{
-                $data = ClassModel::orderBy($orderBy, $order)
-                    ->with('category', 'quizzes', 'author', 'users')
-                    ->paginate($perPage);
+            $query = ClassModel::orderBy($orderBy, $order)
+                ->with('category', 'quizzes', 'author');
+
+            if (! empty($author_id) ) {
+                $query->where('author_id', $author_id);
             }
+
+            // Add category filter if category_id is provided
+            if (! empty($category_id) ) {
+                $query->where('category_id', $category_id);
+            }
+
+            // search by name and email if search text is provided
+            if( ! empty($search) ){
+                $query->whereAny([
+                    'title',
+                    'description',
+                ], 'like', '%'.$search.'%');
+            }
+
+            // get query final result
+            $data = $query->paginate($perPage);
 
             return $this->responseSuccess($data, 'Class List Fetch Successfully !');
 
@@ -83,15 +98,7 @@ class ClassController extends Controller
 
             $class = ClassModel::create($request_data);
 
-            /**
-             * Set Class Users
-             */
-            // Retrieve the user IDs from the request (assuming they're in an array)
-            $users_ids = $request->input('users');
-            // Associate users with the class by inserting records into the pivot table
-            $class->users()->attach($users_ids, ['created_at' => date('Y-m-d H:i:s')]);
-
-            $response_data = ClassModel::with('category', 'quizzes', 'author', 'users')->find($class->id);
+            $response_data = ClassModel::with('category', 'quizzes', 'author')->find($class->id);
 
             return $this->responseSuccess($response_data, 'New Class Created Successfully !');
 
@@ -106,7 +113,7 @@ class ClassController extends Controller
        
         try {
 
-            $data = ClassModel::with('category', 'quizzes', 'author', 'users')->find($id);
+            $data = ClassModel::with('category', 'quizzes', 'author')->find($id);
 
             if (is_null($data)) {
                 return $this->responseError(null, 'Class Not Found', Response::HTTP_NOT_FOUND);
@@ -155,15 +162,7 @@ class ClassController extends Controller
             // If everything is OK, then update.
             $class->update($request_data);
 
-            /**
-             * Set Class Users
-             */
-            // Retrieve the user IDs from the request (assuming they're in an array)
-            $users_ids = $request->input('users');
-            // Associate users with the class by inserting records into the pivot table
-            $class->users()->syncWithPivotValues($users_ids, ['updated_at' => date('Y-m-d H:i:s')]);
-
-            $response_data = ClassModel::with('category', 'quizzes', 'author', 'users')->find($class->id);
+            $response_data = ClassModel::with('category', 'quizzes', 'author')->find($class->id);
 
             if (is_null($response_data)) {
                 return $this->responseError(null, 'Class Not Found', Response::HTTP_NOT_FOUND);
@@ -201,6 +200,15 @@ class ClassController extends Controller
             return $this->responseError(null, $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         
+    }
+
+    public function get_user_enrolled_classes_ids( $user_id ){
+        /**
+         * get user verified fee vouchers
+         * fetch each voucher tutor-id and category-id 
+         * fetch classes-ids by tutor-id and category-id
+         * return classes ids 
+         */
     }
 
 }

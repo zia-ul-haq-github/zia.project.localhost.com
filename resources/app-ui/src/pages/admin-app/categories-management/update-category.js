@@ -93,8 +93,7 @@ const UpdateCategory = () => {
     const [form] = Form.useForm();
     const [categoryId, setCategoryId] = useState(0);
 
-    const [featuredImageUrl, setFeaturedImageUrl] = useState('');
-    const [imageUrl, setImageUrl] = useState(featuredImageUrl);
+    const [imageUrl, setImageUrl] = useState(DEFAULT_PLACEHOLDER_IMAGE_URL);
 
     const [ allTutors, setAllTutors ] = useState( [] );
     const [ allUsers, setAllUsers ] = useState( [] );
@@ -204,7 +203,7 @@ const UpdateCategory = () => {
                                 console.log('api_response');
                                 console.log(api_response);
 
-                                setFeaturedImageUrl(api_response?.data?.image_url);
+                                setImageUrl(api_response?.data?.image_url);
 
                                 return {
                                     ...initialValues,
@@ -230,11 +229,6 @@ const UpdateCategory = () => {
 
                         values.category_id = categoryId;
                         values.image_url = imageUrl;
-
-                        console.log('imageUrl');
-                        console.log(imageUrl);
-
-                        console.log('Final payload values:', values); // Add this
                         
                         await onFinishHandlerForm(values, imageUrl);
                     }}
@@ -371,6 +365,7 @@ const UpdateCategory = () => {
                                         name={'title'}
                                         label="Title"
                                         placeholder="Type Category Title"
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
                                 </ProForm.Group>
@@ -382,6 +377,7 @@ const UpdateCategory = () => {
                                             rows: 6,
                                         } }
                                         placeholder="Share a little description to fill out your category."
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
                                 </ProForm.Group>

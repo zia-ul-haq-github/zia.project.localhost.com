@@ -16,17 +16,23 @@ return new class extends Migration
             $table->id();
             $table->string('title', 255);
             $table->longText('description')->nullable();
-            $table->string('status', 255);
+            $table->integer('amount');
+            $table->date('due_date')->nullable();
+            $table->string('status', 255)->comment('UnPaid | Paid');
             $table->string('payment_proof_image_url')->nullable();
-            $table->unsignedBigInteger('author_id')->comment('Author ID');
+            $table->string('verification_status', 255)->comment('pending | verified');
+            $table->unsignedBigInteger('category_id')->comment('Category ID');
+            $table->unsignedBigInteger('tutor_id')->comment('Tutor ID');
+            $table->unsignedBigInteger('fee_package_id')->comment('Fee Package ID');
             $table->unsignedBigInteger('user_id')->comment('User ID');
-            $table->unsignedBigInteger('class_id')->comment('Class ID');
+            $table->unsignedBigInteger('author_id')->comment('Author ID');
             $table->timestamps();
 
             $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('class_id')->references('id')->on('classes')->onDelete('cascade');
-
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('tutor_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('fee_package_id')->references('id')->on('fee_packages')->onDelete('cascade');
         });
 
     }

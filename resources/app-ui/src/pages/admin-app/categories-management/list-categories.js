@@ -124,6 +124,7 @@ const ListCategories = () => {
                 actionRef={categoriesTableRef}
                 rowKey="id"
                 search={false}
+                options={false}
                 pagination={{
                     defaultPageSize: 10,
                     showSizeChanger: true,

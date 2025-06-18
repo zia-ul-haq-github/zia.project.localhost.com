@@ -5,8 +5,7 @@ import {
     ProForm,
     ProFormText,
     ProFormTextArea,
-    ProFormDatePicker,
-    StepsForm
+    ProFormDatePicker
 } from '@ant-design/pro-components';
 import { Row, Col, message, Button, Form, Image, Upload, Steps, Alert } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -27,12 +26,57 @@ const waitTime = (time = 100) => {
 /**
  * Form Submission handler and API Request Performer
  */
-const onFinishHandlerStepsForm = async (values, userID) => {
-    console.log('onFinishHandlerStepsForm');
+const onFinishHandlerForm = async (values, imageUrl) => {
+    console.log('onFinishHandlerForm');
     console.log('Received values of form: ', values);
 
-    message.success('Submitted successfully');
-    history.push('/admin-app/users/edit/' + userID);
+    /**
+     * API Request
+     */
+    try {
+    
+        const request_data = {
+            image_url: imageUrl,
+            name: values?.name,
+            email: values?.email,
+            role: 'user',
+            mobile_no: values?.mobile_no,
+            date_of_birth: moment(new Date(values?.date_of_birth)).format('YYYY-MM-DD'),
+            bio_data: values?.bio_data,
+            password: values?.password,
+            address: {
+                street: values?.street,
+                country: values?.country,
+                province: values?.province,
+                city: values?.city,
+                postal_code: values?.postal_code
+            }
+        };
+    
+        return await request('/api/users', {
+            method: 'POST',
+            data: request_data,
+    
+        }).then(async (api_response) => {
+    
+            /**
+             * User Created then show message and redirect to listing screen
+             */
+            if (api_response?.data?.id > 0) {
+                message.success('Submitted successfully');
+                history.push('/admin-app/users/edit/' + api_response?.data?.id);
+            }
+    
+        }).catch(function (error) {
+            console.log(error);
+        });
+    
+    } catch (api_response) {
+        console.log('api_response - error');
+        console.log(api_response);
+    }
+    
+    return true;
     
 };
 
@@ -44,7 +88,6 @@ const CreateUser = () => {
 
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState(DEFAULT_USER_PROFILE_IMAGE_URL);
-    const [userID, setUserID] = useState({});
     
        /**
      * The Component Output
@@ -52,80 +95,18 @@ const CreateUser = () => {
 
     return (
         <PageContainer>
-            <StepsForm
-                onFinish={async (values) => {
-                    await waitTime(1000);
-                    return await onFinishHandlerStepsForm(values, userID);
-                }}
-                formProps={{
-                    validateMessages: {
-                        required: 'This is required',
-                    },
-                }}
-                submitter={{
-                    render: (_, dom) => {
-                        return (<FooterToolbar>{dom}</FooterToolbar>)
-                    },
-                }}
-                // You can use the stepsRender attribute to customize the step bar, refer to the following
-                stepsRender={(steps, dom) => {
-                    return (
-                        <Steps current={dom?.props?.children?.props?.current}>
-                            {[
-                            {key: "personal_details", title: "Personal Details"},
-                            {key: "qualification_and_experience_details", title: "Dummy Data"}
-                            ].map((item) => (
-                            <Steps.Step key={item.key} title={item.title}/>
-                            ))}
-                        </Steps>
-                    );
-                return dom;
-                }}
-            >
-                <StepsForm.StepForm
-                    name="personal_details"
-                    title="Personal Details"
+            
+                <ProForm
                     onFinish={async (values) => {
                         await waitTime(2000);
-                        const request_data = {
-                            // image_base_64: values?.image_base_64,
-                            // image_base_64: imageUrl,
-                            image_url: imageUrl,
-                            name: values?.name,
-                            email: values?.email,
-                            role: 'user',
-                            mobile_no: values?.mobile_no,
-                            date_of_birth: moment(new Date(values?.date_of_birth)).format('YYYY-MM-DD'),
-                            bio_data: values?.bio_data,
-                            password: values?.password,
-                        };
-                    
-                        /**
-                         * API Request
-                        */
-                    
-                        request('/api/users', {
-                            method: 'POST',
-                            data: request_data,
-                    
-                        }).then(async (api_response) => {
-                    
-                            /**
-                             * User Created then show message and redirect to listing screen
-                             */
-                            if (api_response?.data?.id > 0) {
-                                setUserID(api_response?.data?.id);
-                            }
-                    
-                        }).catch(function (error) {
-                            console.log(error);
-                        });
-                        return true;
+                        await onFinishHandlerForm(values, imageUrl);
                     }}
                     layout='vertical'
                     grid={true}
-                    //   initialValues={initialValues}
                     form={form}
+                    submitter={{
+                        render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
+                    }}
                 >
                 
                     <ProCard
@@ -255,6 +236,7 @@ const CreateUser = () => {
                                         name={'name'}
                                         label="Name"
                                         placeholder="Type Your Name"
+                                        rules={[{required: true}]}
                                         colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                     <ProFormText
@@ -269,12 +251,14 @@ const CreateUser = () => {
                                     <ProFormDatePicker
                                         label="Date of Birth"
                                         name={'date_of_birth'}
+                                        rules={[{required: true}]}
                                         colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                     <ProFormText
                                         name={'mobile_no'}
                                         label="Mobile No"
                                         placeholder="Type Your Mobile No"
+                                        rules={[{required: true}]}
                                         colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                 </ProForm.Group>
@@ -286,6 +270,7 @@ const CreateUser = () => {
                                             rows: 6,
                                         } }
                                         placeholder="Share a little biographical information to fill out your profile. This may be shown publicly. "
+                                        rules={[{required: true}]}
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
                                 </ProForm.Group>
@@ -322,25 +307,64 @@ const CreateUser = () => {
                             </Col>
                         </Row>
                     </ProCard>
-                </StepsForm.StepForm>
-                
-                <StepsForm.StepForm
-                    name="qualification_and_experience_details"
-                    title="Qualification & Experience Details"
-                    onFinish={async () => {
-                        await waitTime(2000);
-                        return true;
-                    }}
-                    layout='vertical'
-                    grid={true}
-                    //   initialValues={initialValues}
-                    //   form={form}
-                >
-                
-                <Alert message=" testing message 123" type="success" />;
-                            
-                </StepsForm.StepForm>
-            </StepsForm>
+
+                    <ProCard
+                        title="Address Details"
+                        bordered
+                        headerBordered
+                        collapsible
+                        size="default"
+                        type="inner"
+                        style={{
+                            marginBlockEnd: 15,
+                            minWidth: 800,
+                            maxWidth: '100%',
+                        }}
+                    >
+                        <ProForm.Group size={24}>
+                            <ProFormText
+                                name={'street'}
+                                label="Street address"
+                                placeholder="Please Enter Street Address"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
+                            />
+                        </ProForm.Group>
+                        <ProForm.Group size={24}>
+                            <ProFormText
+                                name={'country'}
+                                label="Country / Region"
+                                placeholder="Please Enter Country / Region"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                            <ProFormText
+                                name={'province'}
+                                label="Province"
+                                placeholder="Please Enter Province"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                        </ProForm.Group>
+                        <ProForm.Group size={24}>
+                            <ProFormText
+                                name={'city'}
+                                label="City"
+                                placeholder="Please Enter City"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                            <ProFormText
+                                name={'postal_code'}
+                                label="Postal Code / ZIP"
+                                placeholder="Please Enter Post Code / ZIP"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                        </ProForm.Group>
+                    </ProCard>
+
+                </ProForm>
 
         </PageContainer>
     );

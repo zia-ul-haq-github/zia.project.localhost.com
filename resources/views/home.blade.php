@@ -11,6 +11,9 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="front-page-assets/images/logo/favicon.png">
 
+    
+    {{-- public -> front-page-assets --}}
+
     <!-- Bootstrap -->
     <link rel="stylesheet" href="front-page-assets/css/bootstrap.min.css">
     <!-- select2 -->

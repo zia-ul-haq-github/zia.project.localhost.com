@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'dummyimage' => [
+        'bg_color' => env('DUMYIMAGE_BG_COLOR'),
+        'text_color' => env('DUMYIMAGE_TEXT_COLOR'),
+    ],
+
 ];

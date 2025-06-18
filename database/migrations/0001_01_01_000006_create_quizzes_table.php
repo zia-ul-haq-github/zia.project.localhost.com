@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('title', 255);
             $table->longText('description')->nullable();
             $table->string('status', 255);
+            $table->unsignedBigInteger('passing_percentage');
+            $table->unsignedBigInteger('attempts_limit');
             $table->unsignedBigInteger('author_id')->comment('Author User ID');
             $table->unsignedBigInteger('class_id')->comment('Class ID');
             $table->timestamps();

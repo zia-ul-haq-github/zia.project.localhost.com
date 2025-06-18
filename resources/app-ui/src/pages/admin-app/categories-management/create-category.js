@@ -298,6 +298,7 @@ const CreateCategory = () => {
                                         name={'title'}
                                         label="Title"
                                         placeholder="Type Category Title"
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
                                 </ProForm.Group>
@@ -309,6 +310,7 @@ const CreateCategory = () => {
                                             rows: 6,
                                         } }
                                         placeholder="Share a little description to fill out your category."
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
                                 </ProForm.Group>

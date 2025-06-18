@@ -1,8 +1,14 @@
+import { FileProtectOutlined } from '@ant-design/icons';
 import { ProCard, ProForm, ProFormText, ModalForm, ProFormTextArea, ProTable } from '@ant-design/pro-components';
-import { Row, Col, Image } from 'antd';
+import { Row, Col, Image, Button } from 'antd';
 import { request } from '@umijs/max';
+import moment from 'moment';
+import { useRef, useState } from "react";
+import GenerateFeeVoucher from './generate-fee-voucher';
 
-const ViewTutorHiring = ( { visible, onVisiblityChange, viewModelData, waitTime } ) => {
+const ViewTutorHiring = ( { visible, onVisiblityChange, viewModelData, waitTime, categoryId, userData } ) => {
+
+    const feePackagesTableRef = useRef();
 
     const qualificationColumns = [
         
@@ -76,6 +82,89 @@ const ViewTutorHiring = ( { visible, onVisiblityChange, viewModelData, waitTime 
             key: 'table-column-end-date',
             hideInForm: true,
             hideInSearch: true,
+        },
+    ];
+
+    const feePackagesColumns = [
+    
+        {
+            title: 'ID',
+            dataIndex: 'id',
+            key: 'table-column-id',
+            hideInSearch: true,
+            sorter: true,
+            defaultSortOrder: 'descend',
+        },
+        {
+            title: "Title",
+            dataIndex: 'title',
+            key: 'table-column-title',
+            hideInSearch: true,
+        },
+        {
+			title: 'Description',
+			dataIndex: 'description',
+			key: 'table-column-description',
+			hideInSearch: true,
+		},
+        {
+            title: "Fee Amount",
+            dataIndex: 'fee_amount',
+            key: 'table-column-fee-amount',
+            hideInSearch: true,
+        },
+        {
+            title: "Service Charges",
+            dataIndex: 'service_charges_amount',
+            key: 'table-column-service-charges-amount',
+            hideInSearch: true,
+        },
+        {
+            title: "Created Date",
+            dataIndex: 'created_at',
+            key: 'table-column-created-date',
+            sorter: true,
+            hideInForm: true,
+            hideInSearch: true,
+            render: (created_at) => {
+                return (<p>{moment( new Date(created_at) ).format('DD-MM-YYYY')}</p>)
+            },
+        },
+        {
+            title: "Updated Date",
+            dataIndex: 'updated_at',
+            key: 'table-column-updated-date',
+            sorter: true,
+            hideInForm: true,
+            hideInSearch: true,
+            render: (updated_at) => {
+                return (<p>{moment( new Date(updated_at) ).format('DD-MM-YYYY')}</p>)
+            },
+        },
+        {
+            title: 'Actions',
+            valueType: 'option',
+            key: 'table-column-actions',
+            render: (text, record, _, action) => [
+                <>
+                    <GenerateFeeVoucher
+                        rowId={ record?.id }
+                        onFinish={ ( { status, text_message } ) => {
+                            if ( status ) {
+                                message.success( text_message );
+                                feePackagesTableRef.current?.reload();
+                            } else {
+                                message.error( text_message );
+                            }
+                        } }
+                        userData={ userData }
+                        categoryId={ categoryId }
+                        tutorData={ viewModelData }
+                        feeAmount={record?.fee_amount}
+                        serviceCharges={record?.service_charges_amount}
+                    />
+                </>
+            ],
         },
     ];
 
@@ -200,6 +289,82 @@ const ViewTutorHiring = ( { visible, onVisiblityChange, viewModelData, waitTime 
                         </Col>
                     </Row>
                 </ProCard>
+
+                <ProCard
+                    title="Address Details"
+                    bordered
+                    headerBordered
+                    size="default"
+                    type="inner"
+                    style={{
+                        marginBlockEnd: 15,
+                        minWidth: 800,
+                        maxWidth: '100%',
+                    }}
+                >
+                    <ProForm.Group size={24}>
+                        <ProFormText
+                            name={'street'}
+                            label="Street address"
+                            initialValue={viewModelData?.address?.street}
+                            fieldProps={{
+                                readOnly: true,
+                            }}
+                            placeholder="Please Enter Street Address"
+                            rules={[{ required: true }]}
+                            colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
+                        />
+                    </ProForm.Group>
+                    <ProForm.Group size={24}>
+                        <ProFormText
+                            name={'country'}
+                            label="Country / Region"
+                            initialValue={viewModelData?.address?.country}
+                            fieldProps={{
+                                readOnly: true,
+                            }}
+                            placeholder="Please Enter Country / Region"
+                            rules={[{ required: true }]}
+                            colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                        />
+                        <ProFormText
+                            name={'province'}
+                            label="Province"
+                            initialValue={viewModelData?.address?.province}
+                            fieldProps={{
+                                readOnly: true,
+                            }}
+                            placeholder="Please Enter Province"
+                            rules={[{ required: true }]}
+                            colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                        />
+                    </ProForm.Group>
+                    <ProForm.Group size={24}>
+                        <ProFormText
+                            name={'city'}
+                            label="City"
+                            initialValue={viewModelData?.address?.city}
+                            fieldProps={{
+                                readOnly: true,
+                            }}
+                            placeholder="Please Enter City"
+                            rules={[{ required: true }]}
+                            colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                        />
+                        <ProFormText
+                            name={'postal_code'}
+                            label="Postal Code / ZIP"
+                            initialValue={viewModelData?.address?.postal_code}
+                            fieldProps={{
+                                readOnly: true,
+                            }}
+                            placeholder="Please Enter Post Code / ZIP"
+                            rules={[{ required: true }]}
+                            colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                        />
+                    </ProForm.Group>
+                </ProCard>
+
                 <ProCard
                     title="Qualification Details"
                     bordered
@@ -217,6 +382,7 @@ const ViewTutorHiring = ( { visible, onVisiblityChange, viewModelData, waitTime 
                         // actionRef={qualificationsTableRef}
                         rowKey="id"
                         search={false}
+                        options={false}
                         pagination={{
                             defaultPageSize: 10,
                             showSizeChanger: true,
@@ -253,6 +419,7 @@ const ViewTutorHiring = ( { visible, onVisiblityChange, viewModelData, waitTime 
                         // actionRef={experiencesTableRef}
                         rowKey="id"
                         search={false}
+                        options={false}
                         pagination={{
                             defaultPageSize: 10,
                             showSizeChanger: true,
@@ -269,6 +436,64 @@ const ViewTutorHiring = ( { visible, onVisiblityChange, viewModelData, waitTime 
                         }
                         dataSource={viewModelData?.experiences?.length ? viewModelData.experiences : []}
                         columns={experienceColumns}
+                    />
+                </ProCard>
+                <ProCard
+                    title="Fee Packages Details"
+                    bordered
+                    headerBordered
+                    size="default"
+                    type="inner"
+                    style={{
+                        marginBlockEnd: 15,
+                        minWidth: 800,
+                        maxWidth: '100%',
+                    }}
+                >
+                    
+                    <ProTable
+                        actionRef={feePackagesTableRef}
+                        rowKey="id"
+                        search={false}
+                        options={false}
+                        pagination={{
+                            defaultPageSize: 10,
+                            showSizeChanger: true,
+                            pageSizeOptions: [10, 20, 50, 100],
+                            onChange: (page) => console.log(page),
+                        }}
+                        request={
+                            async (params = {}, sort, filter, paginate) => {
+                                /**
+                                 * Delay the API request
+                                 */
+                                await waitTime(2000);
+
+                                return await request('/api/fee-packages', {
+
+                                    params: {
+                                        category_id: categoryId,
+                                        tutor_id: viewModelData?.id,
+                                        author_id: viewModelData?.id,
+                                        sort: {...sort},
+                                        pagination: {...params},
+                                    },
+        
+                                }).then(async (api_response) => {
+        
+                                    return { 
+                                        data: api_response.data.data,
+                                        total: api_response.data.total,
+                                        current_page: api_response.data.current_page
+                                    };
+        
+                                }).catch(function (error) {
+                                    console.log(error);
+                                });
+
+                            }
+                        }
+                        columns={feePackagesColumns}
                     />
                 </ProCard>
 

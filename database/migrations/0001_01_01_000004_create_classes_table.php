@@ -24,18 +24,6 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
         });
-
-
-        Schema::create('class_users', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('class_id')->comment('Class ID');
-            $table->unsignedBigInteger('user_id')->comment('User ID');
-            $table->timestamps();
-
-            $table->foreign('class_id')->references('id')->on('classes')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
-
     }
 
     /**
@@ -43,7 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('class_users');
         Schema::dropIfExists('classes');
     }
 };

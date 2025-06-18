@@ -10,7 +10,7 @@ const Settings: ProLayoutProps & {
     prefixCls:'vu-project',
     navTheme: 'light',
     // 拂晓蓝
-    colorPrimary: '#ffc010',
+    colorPrimary: '#074B79',
     layout: 'mix',
     contentWidth: 'Fluid',
     fixedHeader: true,

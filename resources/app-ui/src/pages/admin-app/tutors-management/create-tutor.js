@@ -106,6 +106,13 @@ const CreateTutor = () => {
                             date_of_birth: moment(new Date(values?.date_of_birth)).format('YYYY-MM-DD'),
                             bio_data: values?.bio_data,
                             password: values?.password,
+                            address: {
+                                street: values?.street,
+                                country: values?.country,
+                                province: values?.province,
+                                city: values?.city,
+                                postal_code: values?.postal_code
+                            }
                         };
                     
                         console.log('request_data');
@@ -268,6 +275,7 @@ const CreateTutor = () => {
                                         name={'name'}
                                         label="Name"
                                         placeholder="Type Your Name"
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                     <ProFormText
@@ -282,12 +290,14 @@ const CreateTutor = () => {
                                     <ProFormDatePicker
                                         label="Date of Birth"
                                         name={'date_of_birth'}
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                     <ProFormText
                                         name={'mobile_no'}
                                         label="Mobile No"
                                         placeholder="Type Your Mobile No"
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
                                     />
                                 </ProForm.Group>
@@ -299,6 +309,7 @@ const CreateTutor = () => {
                                             rows: 6,
                                         } }
                                         placeholder="Share a little biographical information to fill out your profile. This may be shown publicly. "
+                                        rules={[{ required: true }]}
                                         colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
                                     />
                                 </ProForm.Group>
@@ -335,6 +346,63 @@ const CreateTutor = () => {
                             </Col>
                         </Row>
                     </ProCard>
+
+                    <ProCard
+                        title="Address Details"
+                        bordered
+                        headerBordered
+                        collapsible
+                        size="default"
+                        type="inner"
+                        style={{
+                            marginBlockEnd: 15,
+                            minWidth: 800,
+                            maxWidth: '100%',
+                        }}
+                    >
+                        <ProForm.Group size={24}>
+                            <ProFormText
+                                name={'street'}
+                                label="Street address"
+                                placeholder="Please Enter Street Address"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 24, lg: 24, xl: 24}}
+                            />
+                        </ProForm.Group>
+                        <ProForm.Group size={24}>
+                            <ProFormText
+                                name={'country'}
+                                label="Country / Region"
+                                placeholder="Please Enter Country / Region"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                            <ProFormText
+                                name={'province'}
+                                label="Province"
+                                placeholder="Please Enter Province"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                        </ProForm.Group>
+                        <ProForm.Group size={24}>
+                            <ProFormText
+                                name={'city'}
+                                label="City"
+                                placeholder="Please Enter City"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                            <ProFormText
+                                name={'postal_code'}
+                                label="Postal Code / ZIP"
+                                placeholder="Please Enter Post Code / ZIP"
+                                rules={[{ required: true }]}
+                                colProps={{xs: 24, sm: 24, md: 12, lg: 12, xl: 12}}
+                            />
+                        </ProForm.Group>
+                    </ProCard>
+
                 </StepsForm.StepForm>
                 <StepsForm.StepForm
                     name="qualification_and_experience_details"

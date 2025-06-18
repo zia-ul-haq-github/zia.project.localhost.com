@@ -23,6 +23,7 @@ return new class extends Migration
             $table->longText('bio_data')->nullable();
             $table->string('mobile_no')->nullable();
             $table->date('date_of_birth')->nullable();
+            $table->longText('address')->nullable();
             $table->timestamps();
         });
 
